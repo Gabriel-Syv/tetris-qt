@@ -148,7 +148,7 @@ void MainWindow::reset_speed()
 
 void MainWindow::increase_speed()
 {
-    speed *= 0.9;
+    speed *= 0.95;
     timer->setInterval(speed);
 }
 
