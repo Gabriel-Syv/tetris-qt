@@ -33,6 +33,8 @@ MainWindow::~MainWindow()
 void MainWindow::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
+
+    // Draw board
     for (int i = 0; i < 20; i++)
         for (int j = 0; j < 10; j++)
         {
@@ -68,7 +70,14 @@ void MainWindow::paintEvent(QPaintEvent *)
             painter.drawRect(j * 29 + 165, i * 29 + 10, 29, 29);
 
         }
-    if (timer->isActive())
+
+    // Draw next piece box
+    painter.setPen(QPen("#000000"));
+    painter.setBrush(QBrush("#ffffff"));
+    painter.drawRect(620, 210, 161, 161);
+
+    if (timer->isActive()) {
+        // Draw current piece
         for (int i = 0; i < 4; i++)
             for (int j = 0; j < 4; j++)
             {
@@ -104,6 +113,45 @@ void MainWindow::paintEvent(QPaintEvent *)
                     painter.drawRect(165 + (boardlogic->CurrentPiece.X + j) * 29, 10 + (boardlogic->CurrentPiece.Y + i) * 29, 29, 29);
 
             }
+
+        // Draw next piece
+
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++)
+            {
+                painter.setPen(QPen("#000000"));
+                switch(boardlogic->NextPiece.PieceColor)
+                {
+                    case 0:
+                        painter.setBrush(QBrush("#ffffff"));
+                        break;
+                    case 1:
+                        painter.setBrush(QBrush("#00ffff"));
+                        break;
+                    case 2:
+                        painter.setBrush(QBrush("#0000ff"));
+                        break;
+                    case 3:
+                        painter.setBrush(QBrush("#ffa500"));
+                        break;
+                    case 4:
+                        painter.setBrush(QBrush("#ffff00"));
+                        break;
+                    case 5:
+                        painter.setBrush(QBrush("#00ff00"));
+                        break;
+                    case 6:
+                        painter.setBrush(QBrush("#ff00ff"));
+                        break;
+                    case 7:
+                        painter.setBrush(QBrush("#ff0000"));
+                        break;
+                }
+                if (boardlogic->NextPiece.PieceArray[i][j])
+                    painter.drawRect(620 + (80 - boardlogic->GetPieceWidth(boardlogic->NextPiece) / 2) + j * 29, 210 + (80 - boardlogic->GetPieceHeight(boardlogic->NextPiece) / 2) + i * 29, 29, 29);
+
+            }
+    }
 
 
 }

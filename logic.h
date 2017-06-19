@@ -6,6 +6,9 @@
 #include "mainwindow.h"
 class Logic
 {
+private:
+    void SetPiece(Piece*, int, int);
+    void CopyPiece(Piece, Piece*);
 public:
     Logic(MainWindow*);
     void InitPiece();
@@ -18,15 +21,20 @@ public:
     bool PieceCanGoRight();
     bool PieceCanGoLeft();
     bool PieceCanRotate(int);
+    int GetPieceWidth(Piece);
+    int GetPieceHeight(Piece);
 
     QString PIECES;
 
     int Board[22][12];
     Piece CurrentPiece;
+    Piece NextPiece;
     bool gameover;
     bool dropping;
     int rot;
     int piece;
+    int next_rot;
+    int next_piece;
     int score;
 
 

@@ -11,35 +11,86 @@ Logic::Logic(MainWindow* context)
     PIECES = "1111000000000000100010001000100011110000000000001000100010001000100011100000000011001000100000001110001000000000010001001100000000101110000000001000100011000000111010000000000011000100010000001100110000000000110011000000000011001100000000001100110000000000011011000000000010001100010000000110110000000000100011000100000001001110000000001000110010000000111001000000000001001100010000001100011000000000010011001000000011000110000000000100110010000000";
     gameover = false;
     dropping = false;
+    NextPiece.PieceColor = -1;
     main_app = context;
     score = 0;
     for (int i = 0; i < 22; i++)
         for (int j = 0; j < 12; j++)
             Board[i][j] = 0;
+
+    std::time_t result = std::time(0);
+    srand(result);
+
     InitPiece();
 
 }
 
-void Logic::InitPiece()
+void Logic::SetPiece(Piece* p, int piece_nr, int piece_rot)
 {
-    std::time_t result = std::time(0);
-    srand(result);
-    rot = rand() % 4;
-    piece = rand() % 7;
+    p->PieceColor = piece_nr + 1;
 
-    CurrentPiece.PieceColor = piece + 1;
+    p->X = 3;
+    p->Y = 0;
 
-    CurrentPiece.X = 3;
-    CurrentPiece.Y = 0;
-
-    int s = piece * (16 * 4) + rot * 16;
+    int s = piece_nr * (16 * 4) + piece_rot * 16;
 
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 4; j++)
         {
-            CurrentPiece.PieceArray[i][j] = PIECES[s] == '0' ? false : true;
+            p->PieceArray[i][j] = PIECES[s] == '0' ? false : true;
             s++;
         }
+}
+
+void Logic::CopyPiece(Piece source, Piece * dest)
+{
+    dest->PieceColor = source.PieceColor;
+    dest->X = source.X;
+    dest->Y = source.Y;
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 4; j++)
+            dest->PieceArray[i][j] = source.PieceArray[i][j];
+}
+
+int Logic::GetPieceWidth(Piece p)
+{
+    int maxw = 0;
+    for (int j=0; j<4; j++)
+    {
+        for (int i = 0; i<4; i++)
+             if (p.PieceArray[i][j]) { maxw++; break; }
+    }
+    return maxw * 29;
+}
+
+int Logic::GetPieceHeight(Piece p)
+{
+    int maxh = 0;
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++)
+            if (p.PieceArray[i][j]) { maxh++; break; }
+    }
+    return maxh * 29;
+}
+
+void Logic::InitPiece()
+{
+    if (NextPiece.PieceColor == -1) {
+        piece = rand() % 7;
+        rot = rand() % 4;
+        SetPiece(&CurrentPiece, piece, rot);
+        next_piece = rand() % 7;
+        next_rot = rand() % 4;
+        SetPiece(&NextPiece, next_piece, next_rot);
+    } else {
+        CopyPiece(NextPiece, &CurrentPiece);
+        piece = next_piece;
+        rot = next_rot;
+
+        next_piece = rand() % 7;
+        next_rot = rand() % 4;
+        SetPiece(&NextPiece, next_piece, next_rot);
+    }
 }
 
 void Logic::ReloadPiece()
